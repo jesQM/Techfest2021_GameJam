@@ -21,9 +21,9 @@ TagManager:
   - Decoration
   - 
   - Enemy
+  - Player
   - 
-  - 
-  - 
+  - PlayerShots
   - 
   - 
   - 

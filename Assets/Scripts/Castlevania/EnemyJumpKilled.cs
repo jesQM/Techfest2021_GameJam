@@ -7,6 +7,6 @@ public class EnemyJumpKilled : MonoBehaviour
 {
     public void Kill()
     {
-        Destroy(this.gameObject);
+        GetComponent<EnemyMovement>().Kill();
     }
 }

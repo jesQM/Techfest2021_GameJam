@@ -6,20 +6,23 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerCastlevania : MonoBehaviour
 {
+    public Animator Animator;
     public LayerMask GroundLayer;
     public LayerMask EnemyLayer;
     public float MoveSpeed;
     public float JumpForce;
+    public bool HasGun;
+    public GameObject Shot;
     
     private bool _isGrounded { get { return IsGrounded(); } }
     private Rigidbody2D _rb;
+    private float _direction;
 
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        Hurt();
     }
 
     // Update is called once per frame
@@ -29,6 +32,19 @@ public class PlayerCastlevania : MonoBehaviour
         ManageJump();
 
         CheckEnemyBelow();
+
+        if (HasGun)
+        {
+            if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
+            {
+                Shoot();
+            }
+        }
+    }
+
+    private void Shoot()
+    {
+        Instantiate(Shot, gameObject.transform.position, Quaternion.identity).GetComponent<Shot>().direction = this._direction;
     }
 
     private void ManageJump()
@@ -74,15 +90,23 @@ public class PlayerCastlevania : MonoBehaviour
     {
         float direction = Input.GetAxisRaw("Horizontal");
         transform.Translate(new Vector3(direction, 0, 0) * MoveSpeed * Time.deltaTime);
+        if (direction == 0) {
+            Animator.SetBool("IsMoving", false);
+        } else {
+            Animator.SetBool("IsMoving", true);
+        }
+
 
         if (direction < 0) {
+            this._direction = direction;
             this.transform.Find("Sprite").rotation = Quaternion.Euler(0, 180, 0);
-        } else if(direction > 0){
+        } else if(direction > 0) {
+            this._direction = direction;
             this.transform.Find("Sprite").rotation = Quaternion.Euler(0, 0, 0);
         }
     }
 
-    bool IsGrounded()
+    private bool IsGrounded()
     {
         Vector2 position = transform.position;
         Vector2 direction = Vector2.down;
